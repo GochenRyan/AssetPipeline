@@ -9,19 +9,18 @@ namespace cd
 PIMPL_SCENE_CLASS(Mesh);
 
 PIMPL_SIMPLE_TYPE_APIS(Mesh, ID);
-PIMPL_SIMPLE_TYPE_APIS(Mesh, VertexAttributeCount);
 PIMPL_STRING_TYPE_APIS(Mesh, Name);
 PIMPL_COMPLEX_TYPE_APIS(Mesh, AABB);
 PIMPL_COMPLEX_TYPE_APIS(Mesh, VertexFormat);
-PIMPL_VECTOR_TYPE_APIS(Mesh, MaterialID);
-PIMPL_VECTOR_TYPE_APIS(Mesh, BlendShapeID);
-PIMPL_VECTOR_TYPE_APIS(Mesh, SkinID);
-PIMPL_VECTOR_TYPE_APIS(Mesh, VertexInstanceID);
 PIMPL_VECTOR_TYPE_APIS(Mesh, VertexPosition);
+PIMPL_VECTOR_TYPE_APIS(Mesh, VertexInstanceToID);
 PIMPL_VECTOR_TYPE_APIS(Mesh, VertexNormal);
 PIMPL_VECTOR_TYPE_APIS(Mesh, VertexTangent);
 PIMPL_VECTOR_TYPE_APIS(Mesh, VertexBiTangent);
+PIMPL_VECTOR_TYPE_APIS(Mesh, MaterialID);
 PIMPL_VECTOR_TYPE_APIS(Mesh, PolygonGroup);
+PIMPL_VECTOR_TYPE_APIS(Mesh, BlendShapeID);
+PIMPL_VECTOR_TYPE_APIS(Mesh, SkinID);
 
 Mesh Mesh::FromHalfEdgeMesh(const HalfEdgeMesh& halfEdgeMesh, ConvertStrategy strategy)
 {
@@ -36,14 +35,19 @@ void Mesh::Init(uint32_t vertexCount)
 	m_pMeshImpl->Init(vertexCount);
 }
 
-void Mesh::Init(uint32_t vertexPositionCount, uint32_t vertexAttributeCount)
+void Mesh::Init(uint32_t vertexCount, uint32_t vertexInstanceCount)
 {
-	m_pMeshImpl->Init(vertexPositionCount, vertexAttributeCount);
+	m_pMeshImpl->Init(vertexCount, vertexInstanceCount);
 }
 
 uint32_t Mesh::GetVertexCount() const
 {
 	return m_pMeshImpl->GetVertexCount();
+}
+
+uint32_t Mesh::GetVertexAttributeCount() const
+{
+	return m_pMeshImpl->GetVertexAttributeCount();
 }
 
 uint32_t Mesh::GetPolygonCount() const

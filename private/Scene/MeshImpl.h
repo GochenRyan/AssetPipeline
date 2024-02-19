@@ -27,26 +27,26 @@ public:
 	DECLARE_SCENE_IMPL_CLASS(Mesh);
 
 	IMPLEMENT_SIMPLE_TYPE_APIS(Mesh, ID);
-	IMPLEMENT_SIMPLE_TYPE_APIS(Mesh, VertexAttributeCount);
 	IMPLEMENT_STRING_TYPE_APIS(Mesh, Name);
 	IMPLEMENT_COMPLEX_TYPE_APIS(Mesh, AABB);
 	IMPLEMENT_COMPLEX_TYPE_APIS(Mesh, VertexFormat);
-	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, MaterialID);
-	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, BlendShapeID);
-	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, SkinID);
-	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexInstanceID);
 	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexPosition);
+	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexInstanceToID);
 	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexNormal);
 	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexTangent);
 	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, VertexBiTangent);
+	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, MaterialID);
 	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, PolygonGroup);
+	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, BlendShapeID);
+	IMPLEMENT_VECTOR_TYPE_APIS(Mesh, SkinID);
 
 	void Init(uint32_t vertexCount);
-	void Init(uint32_t vertexPositionCount, uint32_t vertexAttributeCount);
-	void InitVertexAttributes(uint32_t vertexAttributeCount);
+	void Init(uint32_t vertexCount, uint32_t vertexInstanceCount);
+	void InitVertexAttributes(uint32_t vertexInstanceCount);
 	void ShrinkToFit();
 
 	uint32_t GetVertexCount() const { return GetVertexPositionCount(); }
+	uint32_t GetVertexAttributeCount() const;
 	uint32_t GetPolygonCount() const;
 
 	void UpdateAABB();
@@ -76,13 +76,14 @@ public:
 		uint32_t blendShapeCount;
 		uint32_t skinCount;
 		uint32_t vertexCount;
+		uint32_t vertexInstanceCount;
 		uint32_t vertexUVSetCount;
 		uint32_t vertexColorSetCount;
 		uint32_t polygonGroupCount;
 		
 		inputArchive >> GetName() >> GetID().Data() >> GetAABB()
 			>> materialCount >> blendShapeCount >> skinCount
-			>> vertexCount >> GetVertexAttributeCount() >> vertexUVSetCount >> vertexColorSetCount
+			>> vertexCount >> vertexInstanceCount >> vertexUVSetCount >> vertexColorSetCount
 			>> polygonGroupCount;
 
 		GetVertexFormat() << inputArchive;
@@ -96,9 +97,9 @@ public:
 		SetSkinIDCount(skinCount);
 		inputArchive.ImportBuffer(GetSkinIDs().data());
 
-		Init(vertexCount, GetVertexAttributeCount());
+		Init(vertexCount, vertexInstanceCount);
+		inputArchive.ImportBuffer(GetVertexInstanceToIDs().data());
 		inputArchive.ImportBuffer(GetVertexPositions().data());
-		inputArchive.ImportBuffer(GetVertexInstanceIDs().data());
 		inputArchive.ImportBuffer(GetVertexNormals().data());
 		inputArchive.ImportBuffer(GetVertexTangents().data());
 		inputArchive.ImportBuffer(GetVertexBiTangents().data());
@@ -140,15 +141,15 @@ public:
 	{
 		outputArchive << GetName() << GetID().Data() << GetAABB()
 			<< GetMaterialIDCount() << GetBlendShapeIDCount() << GetSkinIDCount()
-			<< GetVertexPositionCount() << GetVertexAttributeCount() << GetVertexUVSetCount() << GetVertexColorSetCount()
+			<< GetVertexPositionCount() << GetVertexInstanceToIDCount() << GetVertexUVSetCount() << GetVertexColorSetCount()
 			<< GetPolygonGroupCount();
 
 		GetVertexFormat() >> outputArchive;
 		outputArchive.ExportBuffer(GetMaterialIDs().data(), GetMaterialIDs().size());
 		outputArchive.ExportBuffer(GetBlendShapeIDs().data(), GetBlendShapeIDs().size());
 		outputArchive.ExportBuffer(GetSkinIDs().data(), GetSkinIDs().size());
+		outputArchive.ExportBuffer(GetVertexInstanceToIDs().data(), GetVertexInstanceToIDs().size());
 		outputArchive.ExportBuffer(GetVertexPositions().data(), GetVertexPositions().size());
-		outputArchive.ExportBuffer(GetVertexInstanceIDs().data(), GetVertexInstanceIDs().size());
 		outputArchive.ExportBuffer(GetVertexNormals().data(), GetVertexNormals().size());
 		outputArchive.ExportBuffer(GetVertexTangents().data(), GetVertexTangents().size());
 		outputArchive.ExportBuffer(GetVertexBiTangents().data(), GetVertexBiTangents().size());

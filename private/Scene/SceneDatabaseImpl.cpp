@@ -161,6 +161,7 @@ void SceneDatabaseImpl::Dump() const
 	printf("\tUnitSystem : \n");
 	printf("\t\tUnit : %s\n", cd::Unit::CenterMeter == GetUnit() ? "CenterMeter" : "Meter");
 
+	printf("\tRootNode count : %d\n", GetRootNodeIDCount());
 	printf("\tNode count : %d\n", GetNodeCount());
 	printf("\tMesh count : %d\n", GetMeshCount());
 	printf("\tBlendShape count : %d\n", GetBlendShapeCount());
@@ -178,6 +179,14 @@ void SceneDatabaseImpl::Dump() const
 	if (GetNodeCount() > 0U)
 	{
 		printf("\n");
+
+		printf("[RootNodeIDs] ");
+		for (auto rootNodeID : GetRootNodeIDs())
+		{
+			printf("%u ", rootNodeID.Data());
+		}
+		printf("\n");
+
 		for (const auto& node : GetNodes())
 		{
 			printf("[Node %u] ParentID = %u, Name = %s\n", node.GetID().Data(), node.GetParentID().Data(), node.GetName());
@@ -197,16 +206,21 @@ void SceneDatabaseImpl::Dump() const
 		for (const auto& mesh : GetMeshes())
 		{
 			printf("[Mesh %u] Name = %s, VertexCount = %u\n", mesh.GetID().Data(), mesh.GetName(), mesh.GetVertexCount());
+			printf("\tPolygonCount = %u, VertexInstanceCount = %u\n", mesh.GetPolygonCount(), mesh.GetVertexInstanceToIDCount());
 			const auto& polygonGroups = mesh.GetPolygonGroups();
 			for (uint32_t polygonGroupIndex = 0U; polygonGroupIndex < polygonGroups.size(); ++polygonGroupIndex)
 			{
 				auto& polygonGroup = polygonGroups[polygonGroupIndex];
-				auto materialID = mesh.GetMaterialID(polygonGroupIndex);
 				printf("\t[PolygonGroup %u] PolygonCount = %u\n", polygonGroupIndex, static_cast<uint32_t>(polygonGroup.size()));
-				printf("\t\t[Associated Material %u] Name = %s\n", materialID.Data(), GetMaterial(materialID.Data()).GetName());
-				if (materialID.IsValid())
+
+				if (mesh.GetMaterialIDCount() > 0U)
 				{
-					materialDrawMeshPolygonGroupIDs[materialID][mesh.GetID()].push_back(polygonGroupIndex);
+					auto materialID = mesh.GetMaterialID(polygonGroupIndex);
+					printf("\t\t[Associated Material %u] Name = %s\n", materialID.Data(), materialID.IsValid() ? GetMaterial(materialID.Data()).GetName() : "");
+					if (materialID.IsValid())
+					{
+						materialDrawMeshPolygonGroupIDs[materialID][mesh.GetID()].push_back(polygonGroupIndex);
+					}
 				}
 			}
 
@@ -373,6 +387,7 @@ void SceneDatabaseImpl::Dump() const
 		for (const auto& skin : GetSkins())
 		{
 			printf("[Skin %u] Name : %s\n", skin.GetID().Data(), skin.GetName());
+			printf("\tMaxVertexInfluenceCount = %u\n", skin.GetMaxVertexInfluenceCount());
 
 			auto meshID = skin.GetMeshID();
 			if (meshID.IsValid())

@@ -41,6 +41,7 @@ struct SceneDatabaseTypeTraits
 	using Morph = cd::Morph;
 	using Node = cd::Node;
 	using ParticleEmitter = cd::ParticleEmitter;
+	using RootNodeID = cd::NodeID;
 	using Skin = cd::Skin;
 	using Skeleton = cd::Skeleton;
 	using Texture = cd::Texture;
@@ -149,7 +150,6 @@ struct MeshTypeTraits
 {
 	// Simple
 	using ID = cd::MeshID;
-	using VertexAttributeCount = uint32_t;
 
 	// String
 	using Name = std::string;
@@ -159,15 +159,22 @@ struct MeshTypeTraits
 	using VertexFormat = cd::VertexFormat;
 
 	// Vector
-	using MaterialID = cd::MaterialID;
-	using BlendShapeID = cd::BlendShapeID;
-	using SkinID = cd::SkinID;
 	using VertexPosition = cd::Point;
-	using VertexInstanceID = cd::VertexID;
+	using VertexInstanceToID = cd::VertexID;
 	using VertexNormal = cd::Direction;
 	using VertexTangent = cd::Direction;
 	using VertexBiTangent = cd::Direction;
+
+	//using VertexEdgeList = std::vector<cd::EdgeID>;
+	//using EdgeID = cd::EdgeID;
+	//using EdgeVertexPair = std::pair<cd::VertexID, cd::VertexID>;
+	//using EdgeHardness = bool;
+	
+	using MaterialID = cd::MaterialID;
 	using PolygonGroup = cd::PolygonGroup;
+
+	using BlendShapeID = cd::BlendShapeID;
+	using SkinID = cd::SkinID;
 };
 
 struct MorphTypeTraits
@@ -241,14 +248,15 @@ struct SkinTypeTraits
 	using ID = cd::SkinID;
 	using MeshID = cd::MeshID;
 	using SkeletonID = cd::SkeletonID;
+	using MaxVertexInfluenceCount = uint32_t;
 
 	// String
 	using Name = std::string;
 
 	// Vector
-	using VertexInfluenceBoneName = std::string;
-	using VertexBoneName = std::string;
-	using VertexBoneWeight = float;
+	using InfluenceBoneName = std::string;
+	using VertexBoneNameArray = std::vector<std::string>;
+	using VertexBoneWeightArray = std::vector<float>;
 };
 
 struct TextureTypeTraits
