@@ -24,11 +24,12 @@ target("AssetPipeline")
     end)
 
     after_build("windows", function(target)
-        os.cp("$(projectdir)/Vendor/AssetPipeline/build/Debug/*.lib", "$(projectdir)/lib/")
-        os.trymv("$(projectdir)/lib/AssetPipeline.lib", "$(projectdir)/lib/AssetPipeline.lib")
-        os.trymv("$(projectdir)/lib/AssetPipeline.lib", "$(projectdir)/lib/AssetPipeline.lib")
-
-        os.cp("$(projectdir)/Vendor/freetype/build/Debug/*.pdb", "$(projectdir)/lib/")
-        os.trymv("$(projectdir)/lib/AssetPipeline.pdb", "$(projectdir)/lib/AssetPipeline.pdb")
-        os.trymv("$(projectdir)/lib/AssetPipeline.pdb", "$(projectdir)/lib/AssetPipeline.pdb")
+        if (is_mode("debug"))
+        then
+            os.cp("$(projectdir)/Vendor/AssetPipeline/build/bin/Debug/AssetPipelineCore.lib", "$(projectdir)/lib/")
+            os.cp("$(projectdir)/Vendor/AssetPipeline/build/bin/Debug/AssetPipelineCore.pdb", "$(projectdir)/lib/")
+        else
+            os.cp("$(projectdir)/Vendor/AssetPipeline/build/bin/Release/AssetPipelineCore.lib", "$(projectdir)/lib/")
+            os.cp("$(projectdir)/Vendor/AssetPipeline/build/bin/Release/AssetPipelineCore.pdb", "$(projectdir)/lib/")
+        end
     end)
