@@ -33,3 +33,5 @@ target("AssetPipeline")
             os.cp("$(projectdir)/Vendor/AssetPipeline/build/bin/Release/AssetPipelineCore.pdb", "$(projectdir)/lib/")
         end
     end)
+
+    set_group("Vendor")
